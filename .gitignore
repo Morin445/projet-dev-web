@@ -1,3 +1,10 @@
+# --- Dépendances & builds ---
+node_modules/
+dist/
+build/
+coverage/
+
+# --- Variables d'environnement (jamais de vrais secrets dans Git) ---
 # Logs
 logs
 *.log
@@ -70,6 +77,29 @@ web_modules/
 .env.*
 !.env.example
 
+# --- Terraform (infra/terraform/) ---
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+
+# --- Kubernetes ---
+infra/k8s/overlays/production/secrets-patch.yaml
+kubeconfig*.yaml
+*.kubeconfig
+
+# --- Logs ---
+*.log
+npm-debug.log*
+
+# --- Éditeurs / OS ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

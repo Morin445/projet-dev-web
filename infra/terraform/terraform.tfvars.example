@@ -1,0 +1,4 @@
+scw_access_key = "SCWxxxxxxxxxxxxxxxxx"
+scw_secret_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+scw_project_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+scw_region     = "fr-par"
