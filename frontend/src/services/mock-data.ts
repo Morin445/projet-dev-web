@@ -8,6 +8,14 @@
  * - Réutiliser les données entre plusieurs services
  */
 import type { Product } from '../types/product';
+import blazerImage from '../assets/images/products/blazer-celeste.jpg.png';
+import chemiseImage from '../assets/images/products/chemise-ebene.jpg.png';
+import robeImage from '../assets/images/products/robe-corail.jpg.png';
+import sneakersImage from '../assets/images/products/sneakers-minimale.jpg.png';
+import sacImage from '../assets/images/products/sac-cabas.jpg.png';
+import pullImage from '../assets/images/products/pull.merinos.jpg.png';
+import lunettesImage from '../assets/images/products/lunette-solaire.jpg.png';
+import jupeImage from '../assets/images/products/jupe-plisse.jpg.png';
 
 // ====== Produits de démonstration ======
 export const mockProducts: Product[] = [
@@ -18,6 +26,8 @@ export const mockProducts: Product[] = [
     price: 149.0,
     category: 'femme',
     badge: 'new',
+    image: blazerImage,
+    imageUrl: blazerImage,
   },
   {
     id: 'p2',
@@ -27,6 +37,8 @@ export const mockProducts: Product[] = [
     originalPrice: 120.0,
     category: 'homme',
     badge: 'promotion',
+    image: chemiseImage,
+    imageUrl: chemiseImage,
   },
   {
     id: 'p3',
@@ -35,6 +47,8 @@ export const mockProducts: Product[] = [
     price: 99.0,
     category: 'femme',
     badge: 'new',
+    image: robeImage,
+    imageUrl: robeImage,
   },
   {
     id: 'p4',
@@ -42,6 +56,8 @@ export const mockProducts: Product[] = [
     description: 'Baskets en cuir blanc, semelle crêpe et finitions contrastées.',
     price: 129.0,
     category: 'accessoires',
+    image: sneakersImage,
+    imageUrl: sneakersImage,
   },
   {
     id: 'p5',
@@ -49,6 +65,8 @@ export const mockProducts: Product[] = [
     description: 'Grand cabas en jute recyclé, bandoulière en cuir amovible.',
     price: 79.0,
     category: 'accessoires',
+    image: sacImage,
+    imageUrl: sacImage,
   },
   {
     id: 'p6',
@@ -58,6 +76,8 @@ export const mockProducts: Product[] = [
     originalPrice: 145.0,
     category: 'homme',
     badge: 'promotion',
+    image: pullImage,
+    imageUrl: pullImage,
   },
   {
     id: 'p7',
@@ -66,6 +86,8 @@ export const mockProducts: Product[] = [
     price: 159.0,
     category: 'accessoires',
     badge: 'new',
+    image: lunettesImage,
+    imageUrl: lunettesImage,
   },
   {
     id: 'p8',
@@ -73,6 +95,8 @@ export const mockProducts: Product[] = [
     description: 'Jupe midi plissée en satin, taille élastique confortable.',
     price: 69.0,
     category: 'femme',
+    image: jupeImage,
+    imageUrl: jupeImage,
   },
 ];
 

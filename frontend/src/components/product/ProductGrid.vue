@@ -31,12 +31,21 @@
             :to="`/product/${product.id}`"
             style="cursor: pointer;"
           >
-            <!-- Image placeholder -->
+            <!-- Image produit -->
             <div class="product-image-wrapper">
               <div
                 class="product-placeholder"
                 :style="placeholderStyle(product)"
               >
+                <img
+                  v-if="productImage(product)"
+                  :src="productImage(product)"
+                  :alt="product.name"
+                  class="product-image"
+                  loading="lazy"
+                  decoding="async"
+                />
+
                 <!-- Badge -->
                 <span
                   v-if="product.badge"
@@ -50,7 +59,12 @@
                 </span>
 
                 <!-- Icône catégorie -->
-                <v-icon size="48" color="rgba(255,255,255,0.6)" class="placeholder-icon">
+                <v-icon
+                  v-if="!productImage(product)"
+                  size="48"
+                  color="rgba(255,255,255,0.6)"
+                  class="placeholder-icon"
+                >
                   {{ categoryIcon(product.category) }}
                 </v-icon>
 
@@ -201,6 +215,10 @@ function categoryIcon(category?: string): string {
   return map[category ?? ''] || 'mdi-package-variant-closed';
 }
 
+function productImage(product: Product): string | undefined {
+  return product.image ?? product.imageUrl;
+}
+
 function placeholderStyle(product: Product): Record<string, string> {
   /* Dégradé de couleur basé sur la catégorie */
   const gradients: Record<string, string> = {
@@ -263,7 +281,7 @@ onBeforeUnmount(() => {
   box-shadow: 0 16px 40px rgba(var(--v-theme-primary), 0.10) !important;
 }
 
-/* --- Image placeholder --- */
+/* --- Image produit --- */
 .product-image-wrapper {
   position: relative;
   width: 100%;
@@ -279,6 +297,14 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   transition: transform 0.4s ease;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .product-card:hover .product-placeholder {

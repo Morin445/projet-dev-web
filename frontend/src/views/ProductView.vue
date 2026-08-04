@@ -35,6 +35,15 @@
         <v-col cols="12" md="6" class="product-image-col" v-reveal="'fade-left'">
           <div class="product-image-wrapper">
             <div class="product-placeholder" :style="placeholderStyle">
+              <img
+                v-if="productImage(product)"
+                :src="productImage(product)"
+                :alt="product.name"
+                class="product-image"
+                loading="lazy"
+                decoding="async"
+              />
+
               <!-- Badge -->
               <span
                 v-if="product.badge"
@@ -48,7 +57,12 @@
               </span>
 
               <!-- Icône décorative -->
-              <v-icon size="80" color="rgba(255,255,255,0.5)" class="placeholder-icon">
+              <v-icon
+                v-if="!productImage(product)"
+                size="80"
+                color="rgba(255,255,255,0.5)"
+                class="placeholder-icon"
+              >
                 {{ categoryIcon }}
               </v-icon>
 
@@ -265,6 +279,10 @@ const categoryIcon = computed<string>(() => {
   return map[product.value?.category ?? ''] || 'mdi-package-variant-closed';
 });
 
+function productImage(currentProduct?: Product): string | undefined {
+  return currentProduct?.image ?? currentProduct?.imageUrl;
+}
+
 const placeholderStyle = computed<Record<string, string>>(() => {
   const gradients: Record<string, string> = {
     femme: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
@@ -380,6 +398,15 @@ function addToCart(): void {
 .product-image-wrapper:hover .placeholder-icon {
   transform: scale(1.1) rotate(-5deg);
   opacity: 0.8;
+}
+
+/* --- Image produit --- */
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 /* --- Badges --- */
