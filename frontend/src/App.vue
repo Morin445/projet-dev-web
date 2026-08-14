@@ -19,12 +19,17 @@
       </router-view>
     </v-main>
     <AppFooter />
+
+    <!-- Toast global : feedbacks discrets ("Produit ajouté au panier",
+         "Ajouté aux favoris"...) pilotés par le store toast. -->
+    <GlobalToast />
   </v-app>
 </template>
 
 <script setup lang="ts">
 import AppHeader from './components/layout/AppHeader.vue';
 import AppFooter from './components/layout/AppFooter.vue';
+import GlobalToast from './components/common/GlobalToast.vue';
 </script>
 
 <style>

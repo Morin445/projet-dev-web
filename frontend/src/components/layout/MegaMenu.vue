@@ -13,7 +13,7 @@
         :to="cat.to"
         rounded="lg"
         class="mega-item"
-        active-color="primary"
+        color="primary"
       />
     </v-list>
   </v-sheet>

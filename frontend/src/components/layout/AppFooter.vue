@@ -205,9 +205,9 @@ const navLinks: FooterLink[] = [
 
 const infoLinks: FooterLink[] = [
   { label: 'FAQ', to: '/faq' },
-  { label: 'Politique de confidentialité', to: '/privacy' },
-  { label: 'Conditions générales', to: '/terms' },
-  { label: 'Livraison', to: '/delivery' },
+  { label: 'Politique de confidentialité', to: '/politique-confidentialite' },
+  { label: 'Conditions générales', to: '/conditions-generales' },
+  { label: 'Livraison', to: '/livraison' },
 ];
 
 const socialLinks: SocialLink[] = [

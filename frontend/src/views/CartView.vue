@@ -55,9 +55,21 @@
             rounded="xl"
           >
             <div class="cart-item-content">
-              <!-- Image placeholder -->
+              <!-- Image produit (ou dégradé de secours si aucune image) -->
               <div class="cart-item-image" :style="itemPlaceholderStyle(item.product.category)">
-                <v-icon size="36" color="rgba(255,255,255,0.5)">
+                <img
+                  v-if="productImage(item.product)"
+                  :src="productImage(item.product)"
+                  :alt="item.product.name"
+                  class="cart-item-thumb"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <v-icon
+                  v-else
+                  size="36"
+                  color="rgba(255,255,255,0.5)"
+                >
                   {{ itemCategoryIcon(item.product.category) }}
                 </v-icon>
                 <span
@@ -231,6 +243,7 @@
  * avec le total et un bouton de commande.
  */
 import { useCartStore } from '../stores/cart.store';
+import type { Product } from '../types/product';
 
 defineOptions({ name: 'CartView' });
 
@@ -243,6 +256,15 @@ function formatPrice(price: number): string {
     style: 'currency',
     currency: 'EUR',
   }).format(price);
+}
+
+/**
+ * Image du produit : préfère `image`, retombe sur `imageUrl`.
+ * Les deux champs sont renseignés par mock-data ; ce fallback garantit
+ * le bon affichage quelle que soit la source (mock ou future API).
+ */
+function productImage(product: Product): string | undefined {
+  return product.image ?? product.imageUrl;
 }
 
 function itemCategoryIcon(category?: string): string {
@@ -328,6 +350,15 @@ function itemPlaceholderStyle(category?: string): Record<string, string> {
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+}
+
+/* --- Vraie image produit dans la miniature --- */
+.cart-item-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .cart-item-badge {

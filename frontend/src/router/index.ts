@@ -34,7 +34,6 @@ const routes = [
     path: '/cart',
     name: 'cart',
     component: () => import('../views/CartView.vue'),
-    meta: { requiresAuth: true },
   },
   {
     path: '/favorites',
@@ -56,6 +55,37 @@ const routes = [
     name: 'contact',
     component: () => import('../views/ContactView.vue'),
   },
+  // ====== Pages informations (footer) ======
+  // Routes dédiées aux pages FAQ, confidentialité, CGV et livraison,
+  // accessibles depuis le footer et directement par URL (survivent au F5).
+  {
+    path: '/faq',
+    name: 'faq',
+    component: () => import('../views/FaqView.vue'),
+  },
+  {
+    path: '/politique-confidentialite',
+    name: 'privacy-policy',
+    component: () => import('../views/PrivacyPolicyView.vue'),
+  },
+  {
+    path: '/conditions-generales',
+    name: 'terms',
+    component: () => import('../views/TermsView.vue'),
+  },
+  {
+    path: '/livraison',
+    name: 'delivery',
+    component: () => import('../views/DeliveryView.vue'),
+  },
+  // ====== Catch-all 404 ======
+  // Toute route réellement inconnue (URL tapée à la main ou lien obsolète)
+  // affiche une page "introuvable" au lieu d'une page blanche.
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../views/NotFoundView.vue'),
+  },
 ];
 
 export const router = createRouter({
@@ -70,6 +100,10 @@ export const router = createRouter({
 });
 
 // ====== Guard d'authentification ======
+// Aucune route ne nécessite actuellement de connexion (le panier est
+// public ; la connexion sera exigée au checkout). Le guard est conservé :
+// il suffit d'ajouter `meta: { requiresAuth: true }` à une route pour
+// la protéger, la redirection vers /login se fera automatiquement.
 router.beforeEach((to, _from, next) => {
   // Route publique → accès libre
   if (!to.meta?.requiresAuth) {

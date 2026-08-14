@@ -73,12 +73,18 @@
                 size="small"
                 class="fav-btn"
                 :class="{ 'fav-active': favoritesStore.isFavorite(product.id) }"
-                @click="favoritesStore.toggleFavorite(product.id)"
-                aria-label="Ajouter aux favoris"
+                @click="onToggleFavorite"
+                :aria-label="favoritesStore.isFavorite(product.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
               >
-                <v-icon size="24">
-                  {{ favoritesStore.isFavorite(product.id) ? 'mdi-heart' : 'mdi-heart-outline' }}
-                </v-icon>
+                <!-- Transition douce entre cœur vide et cœur actif -->
+                <transition name="fav-bounce" mode="out-in">
+                  <v-icon
+                    :key="favoritesStore.isFavorite(product.id) ? 'filled' : 'outline'"
+                    size="24"
+                  >
+                    {{ favoritesStore.isFavorite(product.id) ? 'mdi-heart' : 'mdi-heart-outline' }}
+                  </v-icon>
+                </transition>
               </v-btn>
 
               <!-- Badge promo -->
@@ -175,24 +181,6 @@
                 Continuer mes achats
               </v-btn>
             </div>
-
-            <!-- Message de confirmation -->
-            <v-slide-y-reverse-transition>
-              <v-alert
-                v-if="showConfirmation"
-                type="success"
-                variant="tonal"
-                density="compact"
-                closable
-                class="mt-4 confirmation-alert"
-                @click:close="showConfirmation = false"
-              >
-                <template #title>
-                  <v-icon start size="18">mdi-check-circle</v-icon>
-                  {{ product.name }} a été ajouté au panier !
-                </template>
-              </v-alert>
-            </v-slide-y-reverse-transition>
           </div>
         </v-col>
       </v-row>
@@ -235,6 +223,7 @@ import { useRoute } from 'vue-router';
 import { useProductsStore } from '../stores/products.store';
 import { useCartStore } from '../stores/cart.store';
 import { useFavoritesStore } from '../stores/favorites.store';
+import { useToastStore } from '../stores/toast.store';
 import type { Product } from '../types/product';
 
 defineOptions({ name: 'ProductView' });
@@ -244,6 +233,7 @@ const route = useRoute();
 const productsStore = useProductsStore();
 const cartStore = useCartStore();
 const favoritesStore = useFavoritesStore();
+const toastStore = useToastStore();
 
 // ====== Produit courant ======
 const product = computed<Product | undefined>(() =>
@@ -251,7 +241,6 @@ const product = computed<Product | undefined>(() =>
 );
 
 // ====== Confirmation visuelle ======
-const showConfirmation = ref(false);
 // État "Ajouté ✓" du bouton (retour à la normale après 1,5 s)
 const addedState = ref(false);
 
@@ -300,17 +289,21 @@ function addToCart(): void {
 
   cartStore.addItem(product.value);
 
+  // Feedback discret global ("Produit ajouté au panier")
+  toastStore.show('Produit ajouté au panier');
+
   // Feedback visuel du bouton
   addedState.value = true;
   setTimeout(() => {
     addedState.value = false;
   }, 1500);
+}
 
-  // Alerte de confirmation (comportement existant conservé)
-  showConfirmation.value = true;
-  setTimeout(() => {
-    showConfirmation.value = false;
-  }, 3000);
+// ====== Toggle favori avec feedback toast ======
+function onToggleFavorite(): void {
+  if (!product.value) return;
+  const added = favoritesStore.toggleFavorite(product.value.id);
+  toastStore.show(added ? 'Ajouté aux favoris' : 'Retiré des favoris');
 }
 </script>
 
@@ -474,13 +467,28 @@ function addToCart(): void {
 
 .fav-btn.fav-active .v-icon {
   color: #e91e63;
-  animation: fav-pop 0.3s ease;
 }
 
-@keyframes fav-pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+/* --- Transition douce entre cœur vide et cœur actif
+       (scale rebond + légère rotation, rejouée à chaque toggle) ---
+       Spécificité .fav-btn devant être supérieure à `.fav-btn .v-icon`
+       pour que le timing voulu s'applique réellement. --- */
+.fav-btn .fav-bounce-enter-active {
+  transition:
+    color 0.2s ease,
+    transform 0.25s var(--app-ease-snap);
+}
+
+.fav-btn .fav-bounce-leave-active {
+  transition: opacity 0.12s ease;
+}
+
+.fav-bounce-enter-from {
+  transform: scale(0.4) rotate(-18deg);
+}
+
+.fav-bounce-leave-to {
+  opacity: 0;
 }
 
 /* ================================================================
@@ -591,23 +599,6 @@ function addToCart(): void {
 .back-btn:hover {
   transform: translateY(-2px);
   background-color: rgba(var(--v-theme-primary), 0.06);
-}
-
-/* --- Confirmation --- */
-.confirmation-alert {
-  border-radius: 12px;
-  animation: confirmation-slide 0.3s ease-out;
-}
-
-@keyframes confirmation-slide {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ================================================================

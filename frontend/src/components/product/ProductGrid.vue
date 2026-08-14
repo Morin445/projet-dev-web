@@ -75,12 +75,19 @@
                   size="small"
                   class="fav-btn"
                   :class="{ 'fav-active': favoritesStore.isFavorite(product.id) }"
-                  @click.stop="favoritesStore.toggleFavorite(product.id)"
-                  aria-label="Ajouter aux favoris"
+                  @click.stop="onToggleFavorite(product)"
+                  :aria-label="favoritesStore.isFavorite(product.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
                 >
-                  <v-icon size="22">
-                    {{ favoritesStore.isFavorite(product.id) ? 'mdi-heart' : 'mdi-heart-outline' }}
-                  </v-icon>
+                  <!-- Transition douce entre cœur vide et cœur actif
+                       (scale + légère rotation, rejouée à chaque toggle) -->
+                  <transition name="fav-bounce" mode="out-in">
+                    <v-icon
+                      :key="favoritesStore.isFavorite(product.id) ? 'filled' : 'outline'"
+                      size="22"
+                    >
+                      {{ favoritesStore.isFavorite(product.id) ? 'mdi-heart' : 'mdi-heart-outline' }}
+                    </v-icon>
+                  </transition>
                 </v-btn>
 
                 <!-- Prix d'origine barré (promotion) -->
@@ -133,7 +140,7 @@
                   class="action-btn"
                   :class="{ 'added--active': addedId === product.id }"
                   @click.stop="onAddToCart(product)"
-                  aria-label="Ajouter au panier"
+                  :aria-label="addedId === product.id ? 'Produit ajouté au panier' : 'Ajouter au panier'"
                 >
                   <v-icon start size="16">
                     {{ addedId === product.id ? 'mdi-check' : 'mdi-cart-plus' }}
@@ -160,6 +167,7 @@
 import { computed, ref, onBeforeUnmount } from 'vue';
 import type { Product } from '../../types/product';
 import { useFavoritesStore } from '../../stores/favorites.store';
+import { useToastStore } from '../../stores/toast.store';
 import { mockProducts } from '../../services/mock-data';
 
 defineOptions({ name: 'ProductGrid' });
@@ -182,8 +190,9 @@ const emit = defineEmits<{
   addToCart: [product: Product];
 }>();
 
-// ====== Store Favoris ======
+// ====== Stores ======
 const favoritesStore = useFavoritesStore();
+const toastStore = useToastStore();
 
 // ====== Produits à afficher ======
 // Fallback : réutilise les données centralisées de mock-data.ts
@@ -240,12 +249,20 @@ let addedTimer: ReturnType<typeof setTimeout> | undefined;
 
 function onAddToCart(product: Product): void {
   emit('addToCart', product);
+  // Feedback discret global
+  toastStore.show('Produit ajouté au panier');
   // Feedback visuel : le bouton affiche brièvement un état de succès
   addedId.value = product.id;
   if (addedTimer) clearTimeout(addedTimer);
   addedTimer = setTimeout(() => {
     addedId.value = null;
   }, 1400);
+}
+
+// ====== Toggle favori avec feedback toast ======
+function onToggleFavorite(product: Product): void {
+  const added = favoritesStore.toggleFavorite(product.id);
+  toastStore.show(added ? 'Ajouté aux favoris' : 'Retiré des favoris');
 }
 
 onBeforeUnmount(() => {
@@ -365,13 +382,28 @@ onBeforeUnmount(() => {
 
 .fav-btn.fav-active .v-icon {
   color: #e91e63;
-  animation: fav-pop 0.3s ease;
 }
 
-@keyframes fav-pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+/* --- Transition douce entre cœur vide et cœur actif
+       (scale rebond + légère rotation, rejouée à chaque toggle) ---
+       Spécificité .fav-btn devant être supérieure à `.fav-btn .v-icon`
+       pour que le timing voulu s'applique réellement. --- */
+.fav-btn .fav-bounce-enter-active {
+  transition:
+    color 0.2s ease,
+    transform 0.25s var(--app-ease-snap);
+}
+
+.fav-btn .fav-bounce-leave-active {
+  transition: opacity 0.12s ease;
+}
+
+.fav-bounce-enter-from {
+  transform: scale(0.4) rotate(-18deg);
+}
+
+.fav-bounce-leave-to {
+  opacity: 0;
 }
 
 .badge--new {

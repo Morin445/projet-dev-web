@@ -37,13 +37,13 @@
           >
           <template #prepend>
             <v-avatar
-              :image="item.product.imageUrl ?? undefined"
+              :image="item.product.image ?? item.product.imageUrl ?? undefined"
               color="grey-lighten-3"
               size="48"
               rounded="md"
               variant="flat"
             >
-              <v-icon v-if="!item.product.imageUrl" color="grey-lighten-1">
+              <v-icon v-if="!item.product.image && !item.product.imageUrl" color="grey-lighten-1">
                 mdi-image-outline
               </v-icon>
             </v-avatar>

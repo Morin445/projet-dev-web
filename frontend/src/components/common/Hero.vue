@@ -237,7 +237,7 @@ defineOptions({ name: 'Hero' });
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 1.25rem 1.5rem 1.25rem 2rem;
 
   /* Animation */
   animation: fade-scale 0.7s ease-out both;
@@ -248,14 +248,14 @@ defineOptions({ name: 'Hero' });
 .hero-image-figure {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 560px;
   /* Ratio natif de l'image (1584 × 672) pour éviter toute déformation */
   aspect-ratio: 1584 / 672;
   margin: 0;
-  border-radius: 32px;
+  border-radius: 36px;
   overflow: hidden;
-  border: 1px solid rgba(var(--v-theme-primary), 0.10);
-  box-shadow: 0 24px 64px rgba(var(--v-theme-primary), 0.18);
+  border: 1px solid rgba(var(--v-theme-primary), 0.12);
+  box-shadow: 0 28px 72px rgba(var(--v-theme-primary), 0.20);
 }
 
 .hero-image {
@@ -264,6 +264,7 @@ defineOptions({ name: 'Hero' });
   height: 100%;
   /* Ajuste l'image dans son cadre sans jamais la déformer */
   object-fit: cover;
+  object-position: center 22%;
   transform: scale(1.001);
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
