@@ -1,0 +1,212 @@
+/* ================================================================
+   STYLES GLOBAUX – Design tokens, animations, accessibilité
+   ================================================================
+   Centralise les conventions de design (rayons, ombres, durées,
+   courbes d'animation) et les animations transverses :
+   - reveal au scroll (utilisé via la directive `v-reveal`)
+   - transition de page Vue Router (classe `page-*`)
+   - respect de `prefers-reduced-motion` (accessibilité)
+   ================================================================ */
+
+/* ================================================================
+   1. DESIGN TOKENS
+   Harmonisent espacements, rayons, ombres et transitions
+   sur toute l'application pour un rendu cohérent.
+   ================================================================ */
+:root {
+  /* --- Rayons de bordure (échelle cohérente) --- */
+  --app-radius-sm: 10px;
+  --app-radius-md: 14px;
+  --app-radius-lg: 20px;
+  --app-radius-xl: 24px;
+  --app-radius-pill: 100px;
+
+  /* --- Ombres (portées cohérentes) --- */
+  --app-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --app-shadow-md: 0 8px 24px rgba(var(--v-theme-primary), 0.1);
+  --app-shadow-lg: 0 16px 40px rgba(var(--v-theme-primary), 0.14);
+
+  /* --- Durées & courbes d'animation --- */
+  --app-duration-fast: 0.2s;
+  --app-duration-base: 0.3s;
+  --app-duration-slow: 0.6s;
+  --app-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --app-ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Bordures (couleur uniforme : #E5E7EB du thème) --- */
+  --app-border-color: #e5e7eb;
+}
+
+/* ================================================================
+   1bis. TYPOGRAPHIE PREMIUM
+   Titres d'affichage en serif élégant (Playfair Display), corps
+   de texte en sans-serif (Roboto par défaut de Vuetify).
+   ================================================================ */
+h1,
+h2,
+h3,
+h4,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.hero-title,
+.about-title,
+.section-title,
+.v-toolbar-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+/* ================================================================
+   2. REVEAL AU SCROLL (directive `v-reveal`)
+   Les éléments marqués démarrent invisibles puis apparaissent
+   avec une animation fade/slide/zoom quand ils entrent dans
+   le viewport (via IntersectionObserver dans la directive).
+   ================================================================ */
+
+/* État initial : masqué + léger décalage (variante par défaut = fade-up) */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity var(--app-duration-slow) var(--app-ease-out),
+    transform var(--app-duration-slow) var(--app-ease-out);
+  will-change: opacity, transform;
+}
+
+/* Variantes de direction / zoom */
+[data-reveal='fade-up']    { transform: translateY(28px); }
+[data-reveal='fade-down']  { transform: translateY(-28px); }
+[data-reveal='fade-left']  { transform: translateX(36px); }
+[data-reveal='fade-right'] { transform: translateX(-36px); }
+[data-reveal='zoom-in']    { transform: scale(0.94); }
+
+/* État visible : animation jouée par la directive */
+[data-reveal].reveal--active {
+  opacity: 1;
+  transform: none;
+}
+
+/* ================================================================
+   3. TRANSITION DE PAGE (router-view dans App.vue)
+   Fade + léger slide vertical + très léger zoom, mode out-in.
+   ================================================================ */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.28s var(--app-ease-out),
+    transform 0.28s var(--app-ease-out);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(16px) scale(0.99);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.995);
+}
+
+/* ================================================================
+   4. TRANSITIONS DE LISTES (transition-group)
+   Réutilisées par le panier (drawer + page) pour les apparitions
+   / disparitions d'articles.
+   ================================================================ */
+.cart-item-enter-active,
+.drawer-item-enter-active {
+  transition:
+    opacity 0.3s var(--app-ease-out),
+    transform 0.3s var(--app-ease-out);
+}
+
+.cart-item-leave-active,
+.drawer-item-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.cart-item-enter-from,
+.drawer-item-enter-from {
+  opacity: 0;
+  transform: translateX(24px);
+}
+
+.cart-item-leave-to,
+.drawer-item-leave-to {
+  opacity: 0;
+}
+
+/* ================================================================
+   5. ACCESSIBILITÉ & COMPORTEMENTS GLOBAUX
+   ================================================================ */
+
+/* --- Respect de la réduction des animations (système) ---
+   Désactive reveal, transitions de page et animations décoratives. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* --- Focus visible cohérent (clavier, doré) --- */
+:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- Sélection de texte teintée or (discret) --- */
+::selection {
+  background: rgba(var(--v-theme-primary), 0.22);
+}
+
+/* --- Tap highlight discret sur mobile --- */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ================================================================
+   6. DÉTAILS PREMIUM (desktop)
+   ================================================================ */
+
+/* Barre de défilement fine et dorée (Firefox + WebKit) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--v-theme-primary), 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(var(--v-theme-primary), 0.3);
+  border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--v-theme-primary), 0.5);
+}
+
+/* Léger lissage des ombres d'élévation du thème doré */
+.v-card {
+  --v-shadow-key-umbra-opacity: 0.06;
+  --v-shadow-key-penumbra-opacity: 0.05;
+}
